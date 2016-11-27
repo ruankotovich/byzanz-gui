@@ -15,13 +15,15 @@ set -e
 TIME=$(date +"%Y-%m-%d_%H%M%S")
 
 # Delay before starting
-DELAY=$(zenity --entry --title "Delay to start" --text "Please enter the delay to start in seconds:" --width 200 --height 100 2>/dev/null)
+# DELAY=$(zenity --entry --title "Delay to start" --text "Please enter the delay to start in seconds:" --width 200 --height 100 2>/dev/null)
 
 # Standard screencast folder
-FOLDER="$HOME/Pictures"
+mkdir -p "$HOME/Pictures/ByzanzGIF"
+FOLDER="$HOME/Pictures/ByzanzGIF"
 
 # Default recording duration
-DEFDUR=10
+DEFDUR=5
+DEFDELAY=5
 
 # Sound notification to let one know when recording is about to start (and ends)
 beep() {
@@ -29,13 +31,24 @@ beep() {
 }
 
 # Custom recording duration as set by user
-USERDUR=$(zenity --entry --title "Recoding duration" --text "Please enter the screencast duration in seconds:" --width 200 --height 100 2>/dev/null)
+# USERDUR=$(zenity --entry --title "Recoding duration" --text "Please enter the screencast duration in seconds:" --width 200 --height 100 2>/dev/null)
+
+OUTPUT=$(zenity --title "Byzanz GUI" --forms --add-entry="Delay to start" --add-entry="Record duration")
+
+IFS='|' read -r -a array <<< "$OUTPUT"
+DELAY="${array[0]}"
+USERDUR="${array[1]}"
 
 # Duration and output file
 if [ $USERDUR -gt 0 ]; then
     D=$USERDUR
 else
     D=$DEFDUR
+fi
+
+# Duration and output file
+if [ -z $DELAY ]; then
+    DELAY=$DEFDELAY
 fi
 
 # Window geometry
